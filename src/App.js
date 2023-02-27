@@ -44,132 +44,148 @@ function App() {
     <div className="App">
       <Main>
         <Header>
-          <AiOutlineMenu
-            style={{
-              width: "5%",
-              height: "30px",
-            }}
-          />
-          <img
-            src="https://xexymix.jpg3.kr/xexymix/2020/main/header_logo_bk.png"
-            alt="logo"
-            style={{
-              width: "150px",
-              height: "22px",
-              display: "inline",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              navigate("/");
-            }}
-          />
-          <Ul>
-            <>
-              <Input placeholder="상품 검색"></Input>
-              <BiSearchAlt2
-                style={{ position: "absolute", top: "37px", right: "674px" }}
-              />
-            </>
-            <li
-              onClick={() => {
-                navigate("/men");
+          <Top>
+            <AiOutlineMenu
+              style={{
+                width: "5%",
+                height: "30px",
               }}
-              style={{ cursor: "pointer" }}
-            >
-              MEN
-            </li>
-            <li
-              onClick={() => {
-                navigate("/woman");
+            />
+            <img
+              src="https://xexymix.jpg3.kr/xexymix/2020/main/header_logo_bk.png"
+              alt="logo"
+              style={{
+                width: "150px",
+                height: "22px",
+                display: "inline",
+                cursor: "pointer",
               }}
-              style={{ cursor: "pointer" }}
-            >
-              WOMAN
-            </li>
-            <li
               onClick={() => {
-                navigate("/sale");
+                navigate("/");
               }}
-              style={{ color: "orange", cursor: "pointer" }}
-            >
-              SALE
-            </li>
-            <li
-              onClick={() => {
-                navigate("/cart");
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <AiOutlineShoppingCart
+            />
+            <Ul>
+              <>
+                <Input placeholder="상품 검색"></Input>
+                <BiSearchAlt2
+                  style={{ position: "absolute", top: "37px", right: "674px" }}
+                />
+              </>
+              <li
+                onClick={() => {
+                  navigate("/men");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                MEN
+              </li>
+              <li
+                onClick={() => {
+                  navigate("/woman");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                WOMAN
+              </li>
+              <li
+                onClick={() => {
+                  navigate("/sale");
+                }}
+                style={{ color: "orange", cursor: "pointer" }}
+              >
+                SALE
+              </li>
+              <li
                 onClick={() => {
                   navigate("/cart");
                 }}
-                style={{ width: "40px", height: "25px", cursor: "pointer" }}
-              />
-              CART
-            </li>
-            <li>
-              <MdEmojiPeople
-                style={{
-                  width: "45px",
-                  height: "30px",
-                  cursor: "pointer",
-                  color: "gray",
-                }}
-                onClick={() => {
-                  navigate("/login");
-                }}
-              />
-            </li>
-          </Ul>
+                style={{ cursor: "pointer" }}
+              >
+                <AiOutlineShoppingCart
+                  onClick={() => {
+                    navigate("/cart");
+                  }}
+                  style={{ width: "40px", height: "25px", cursor: "pointer" }}
+                />
+                CART
+              </li>
+              <li>
+                <MdEmojiPeople
+                  style={{
+                    width: "45px",
+                    height: "30px",
+                    cursor: "pointer",
+                    color: "gray",
+                  }}
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                />
+              </li>
+            </Ul>
+          </Top>
         </Header>
         {/* ---------- ROUTER ---------- */}
-        <RouterWrapper>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <div>
+        {/* <RouterWrapper> */}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <MiddleWrapper>
+                <Middle>
                   <img
                     src="https://xexymix.jpg3.kr/xexymix/2020/sub/cate/cate_230106.jpg"
-                    style={{ width: "1280px", paddingBottom: "80px" }}
+                    style={{
+                      padding: "80px 0",
+                    }}
                   />
                   <ContentWrapper>
-                    {/* ??? 안줄어들게 하고 싶어요 ㅠㅠㅠㅠ */}
-                    <h1 style={{ width: "1079px", height: "50px" }}>
-                      BEST ITEM 🏆
-                    </h1>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <h1>BEST ITEM 🏆</h1>
+                      <div style={{ width: "1024px" }}>
+                        <Content>
+                          {state.item.map((v, i) => (
+                            <ItemWrapper>
+                              <img
+                                src={state.item[i].src}
+                                style={{ width: "300px", padding: "30px" }}
+                                onClick={() => {
+                                  navigate(`/detail/${state.item[i].id}`);
+                                }}
+                              />
+                              <p style={{ fontWeight: "bold" }}>
+                                {state.item[i].title}
+                              </p>
+                              <p>{state.item[i].price} Won</p>
+                              <p style={{ color: "gray" }}>
+                                {state.item[i].content}
+                              </p>
+                            </ItemWrapper>
+                          ))}
+                        </Content>
+                      </div>
+                      <MoreBtn onClick={() => {}}>MORE</MoreBtn>
+                    </div>
                   </ContentWrapper>
-                  <Content>
-                    {state.item.map((v, i) => (
-                      <ItemWrapper>
-                        <img
-                          src={state.item[i].src}
-                          style={{ width: "300px", padding: "30px" }}
-                          onClick={() => {
-                            navigate(`/detail/${state.item[i].id}`);
-                          }}
-                        />
-                        <p style={{ fontWeight: "bold" }}>
-                          {state.item[i].title}
-                        </p>
-                        <p>{state.item[i].price} Won</p>
-                        <p style={{ color: "gray" }}>{state.item[i].content}</p>
-                      </ItemWrapper>
-                    ))}
-                  </Content>
-                  <MoreBtn onClick={() => {}}>MORE</MoreBtn>
-                </div>
-              }
-            ></Route>
-            <Route path="/men" element={<Men />}></Route>
-            <Route path="/woman" element={<Woman />}></Route>
-            <Route path="/sale" element={<Sale />}></Route>
-            <Route path="/cart" element={<Cart />}></Route>
-            <Route path="/detail/:id" element={<Detail />}></Route>
-            <Route path="/login" element={<Login />}></Route>
-          </Routes>
-        </RouterWrapper>
+                </Middle>
+              </MiddleWrapper>
+            }
+          ></Route>
+          <Route path="/men" element={<Men />}></Route>
+          <Route path="/woman" element={<Woman />}></Route>
+          <Route path="/sale" element={<Sale />}></Route>
+          <Route path="/cart" element={<Cart />}></Route>
+          <Route path="/detail/:id" element={<Detail />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+        </Routes>
+        {/* </RouterWrapper> */}
       </Main>
       <Footer>
         <div></div>
@@ -181,19 +197,25 @@ function App() {
 export default App;
 
 const Main = styled.div`
-  max-width: 1280px;
-  margin: 0px 30px;
+  width: 100%;
+  /* max-width: 1280px; */
 `;
 
 const Header = styled.div`
   padding: 30px;
   position: fixed;
   background-color: white;
-  width: 1280px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ccc;
+`;
+
+const Top = styled.div`
+  width: 1280px;
+  display: flex;
+  margin: auto;
 `;
 
 const Input = styled.input`
@@ -223,20 +245,28 @@ const Ul = styled.ul`
   font-weight: bold;
 `;
 
-const ContentWrapper = styled.div`
-  width: 1279px;
+const MiddleWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+`;
+
+const Middle = styled.div`
+  width: 1280px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
-  margin: 50px;
+  max-width: 1280px;
 `;
 
 const ItemWrapper = styled.div`
@@ -248,7 +278,7 @@ const ItemWrapper = styled.div`
 `;
 
 const MoreBtn = styled.button`
-  width: 70px;
+  width: 90px;
   height: 30px;
   background-color: salmon;
   border: none;
@@ -257,10 +287,6 @@ const MoreBtn = styled.button`
   cursor: pointer;
   display: block;
   margin: 50px auto;
-`;
-
-const RouterWrapper = styled.div`
-  padding: 90px 0;
 `;
 
 const Footer = styled.div`
