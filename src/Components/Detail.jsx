@@ -24,12 +24,15 @@ export default function Detail() {
   const [count, setCount] = useState(0);
   const [item, setItem] = useState([
     {
-      id: 0,
-      color: "블랙",
-      size: "S",
-      price: 0,
+      id: 1,
+      color: "",
+      size: "",
+      price: state.item[id].price,
+      option: "",
     },
   ]);
+
+  console.log();
 
   //* -----------
   //* HANDLERS
@@ -38,16 +41,89 @@ export default function Detail() {
     color === "#eee" ? setColor("salmon") : setColor("#eee");
   };
 
+  //? 다중 select 값 가져오기 ....!
+  const onChange1 = (e) => {
+    const value = e.target.value;
+
+    setItem((prev) => {
+      const copy = [...prev];
+      return copy.map((item) => {
+        return {
+          ...item,
+          color: value,
+        };
+      });
+    });
+
+    // const toggleHandler = () => {
+    //   setList((prevState) => {
+    //     const copy = [...prevState];
+    //     return copy.map((item) => {
+    //       return {
+    //         ...item,
+    //         like: !item.like,
+    //       };
+    //     });
+    //   });
+    // };
+
+    // let copy = [...item];
+    // copy[0].color = value;
+    // setItem(copy);
+
+    // setItem((prev) => [{ ...prev, color: value }]);
+    // return prev.map((item) => {
+    // if (item.id === value) {
+    //       return { ...item, color: value };
+    //     } else {
+    //       return item;
+    //     }
+    //   });
+    // });
+
+    // console.log(e.target.value);
+
+    console.log(item);
+  };
+
+  const onChange2 = (e) => {
+    const value = e.target.value;
+
+    let copy = [...item];
+    copy[0].size = value;
+    setItem(copy);
+
+    console.log(item);
+  };
+
+  const onChange3 = (e) => {
+    const value = e.target.value;
+
+    let copy = [...item];
+    copy[0].option = value;
+    setItem(copy);
+
+    console.log(item);
+  };
+
+  //? select 값 itme에 추가하기 ....!!!!
+  const addItme = () => {
+    // let copy = [...item];
+    // copy.push({
+    //   id: 1,
+    //   color: "",
+    //   size: "",
+    //   price: state.item[id].price,
+    //   option: "",
+    // });
+    // setItem(copy);
+    // console.log(item);
+  };
+
   //? alert 기능 추가 : "최소 1개 구매하셔야 합니다."
   // const onReduceCount = () => {
   //   count === 0 ? setCount(1) : setCount(count - 1);
   // };
-
-  //? 다중 select 값 가져오기 ....!
-  const onChange = (e) => {
-    //   setItem(...item);
-    //   console.log(item);
-  };
 
   //? 나에게 맞는 사이즈는 ? : 모달창 띄우기 !
   const Modal = () => {
@@ -85,8 +161,9 @@ export default function Detail() {
         <SelectWrapper>
           <div>색상</div>
           <select
-            onChange={onChange}
+            onChange={onChange1}
             style={{ width: "500px", padding: "5px" }}
+            value={item[0].color}
           >
             <option value="블랙">블랙</option>
             <option value="카키">카키</option>
@@ -96,7 +173,7 @@ export default function Detail() {
         <SelectWrapper>
           <div>사이즈</div>
           <select
-            onChange={onChange}
+            onChange={onChange2}
             style={{ width: "500px", padding: "5px" }}
           >
             <option value="S">S</option>
@@ -107,7 +184,7 @@ export default function Detail() {
         <SelectWrapper>
           <div>추가상품</div>
           <select
-            onChange={onChange}
+            onChange={onChange3}
             style={{ width: "500px", padding: "5px" }}
           >
             <option value="밴드">밴드 (+8,000)</option>
@@ -115,6 +192,21 @@ export default function Detail() {
             <option value="악력볼">악력볼 (+5,000)</option>
           </select>
         </SelectWrapper>
+        <button
+          className="btn btn-danger"
+          style={{
+            width: "630px",
+            height: "50px",
+            margin: "20px auto",
+            backgroundColor: "rgb(124 95 66)",
+            color: "white",
+            fontSize: "18px",
+            border: "none",
+          }}
+          onClick={addItme}
+        >
+          추가하기
+        </button>
         <Size
           // onClick={() => {
           //   <Modal />;
@@ -126,9 +218,16 @@ export default function Detail() {
         </Size>
         <Price>
           <SelectPrice>
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ padding: "0 10px" }}>{item[0].color}</div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "10px",
+              }}
+            >
+              <div>{item[0].color}</div>
               <div>{item[0].size}</div>
+              <div>{item[0].option}</div>
             </div>
             <div
               style={{
@@ -174,28 +273,29 @@ export default function Detail() {
             <button
               className="btn btn-danger"
               style={{
-                width: "550px",
+                width: "260px",
+                height: "50px",
+                margin: "10px",
+                backgroundColor: "black",
+              }}
+            >
+              바로 구매하기
+            </button>
+            <button
+              className="btn btn-danger"
+              style={{
+                width: "260px",
                 height: "50px",
                 backgroundColor: "white",
                 border: "1px solid black",
                 color: "black",
+                margin: "10px",
               }}
             >
               장바구니
             </button>
             <FaHeart color={color} className="heart" onClick={onChangeColor} />
           </div>
-          <button
-            className="btn btn-danger"
-            style={{
-              width: "100%",
-              height: "50px",
-              margin: "20px",
-              backgroundColor: "black",
-            }}
-          >
-            바로 구매하기
-          </button>
         </BtnWrapper>
       </Content>
     </Wrapper>
@@ -203,11 +303,13 @@ export default function Detail() {
 }
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 1280px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin: 0 auto;
+  padding: 80px 0;
 `;
 
 const Content = styled.div`
@@ -274,7 +376,7 @@ const BtnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 40px 20px;
+  margin: 0px 20px;
 
   .heart {
     width: 40px;

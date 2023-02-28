@@ -68,7 +68,7 @@ function App() {
               <>
                 <Input placeholder="상품 검색"></Input>
                 <BiSearchAlt2
-                  style={{ position: "absolute", top: "37px", right: "674px" }}
+                  style={{ position: "absolute", top: "37px", right: "971px" }}
                 />
               </>
               <li
