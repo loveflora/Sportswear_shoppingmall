@@ -94,6 +94,9 @@ function OptionBtn({ txt }) {
 // * -------------
 
 const Main = styled.div`
+  padding-top: 80px;
+  height: 80vh;
+
   & .table {
     /* vertical-align: center; */
   }

@@ -1,15 +1,14 @@
 import "./App.css";
 import "./nomalize.css";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 //* ICONS
 import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai";
 import { MdEmojiPeople } from "react-icons/md";
-import { BiSearchAlt2 } from "react-icons/bi";
 
 //* ROUTER
 import Men from "./Components/Men";
@@ -28,14 +27,45 @@ import Detail from "./Components/Detail";
 
 function App() {
   let navigate = useNavigate();
-  let dispatch = useDispatch();
   let state = useSelector((state) => state);
+
+  //? ---------
+  //? 최근 본 상품 : local Storage에 저장
+  //? ---------
+  useEffect(() => {
+    localStorage.setItem("collection", JSON.stringify([]));
+  }, []);
+
+  // let 제목 = 꺼낸거[0].title;
+
+  // console.log(꺼낸거[0].src);
+  // console.log(typeof 꺼낸거[0].src);
+
+  // let 이미지 = 꺼낸거[0].src;
+  // let 제목 = 꺼낸거[0].title;
+  // console.log(아이템);
+  // console.log("아이템 :" + JSON.parse(JSON.stringify(아이템)));
+  // console.log();
+  // console.log(이미지);
 
   // * -------------
   // * State
   // * -------------
   // let [item, setItem] = useState();
   let [tab, setTab] = useState(0);
+
+  // useEffect(() => {
+  // console.log(아이템);
+  // setList(아이템[0].title);
+  // let copy = [...list];
+  // copy.push(...아이템);
+  // setList(copy);
+  // console.log(copy);
+  // }, []);
+
+  let 아이템 = JSON.parse(localStorage.getItem("collection"));
+  // 아이템 = new Set(아이템);
+  // 아이템 = Array.from(아이템);
 
   // * -------------
   // * Render
@@ -59,6 +89,7 @@ function App() {
                 height: "22px",
                 display: "inline",
                 cursor: "pointer",
+                margin: "5px 20px",
               }}
               onClick={() => {
                 navigate("/");
@@ -67,9 +98,6 @@ function App() {
             <Ul>
               <>
                 <Input placeholder="상품 검색"></Input>
-                <BiSearchAlt2
-                  style={{ position: "absolute", top: "37px", right: "971px" }}
-                />
               </>
               <li
                 onClick={() => {
@@ -125,6 +153,7 @@ function App() {
             </Ul>
           </Top>
         </Header>
+
         {/* ---------- ROUTER ---------- */}
         {/* <RouterWrapper> */}
         <Routes>
@@ -175,6 +204,28 @@ function App() {
                     </div>
                   </ContentWrapper>
                 </Middle>
+                <Right>
+                  <h2 style={{ padding: "30px" }}>Collection</h2>
+                  <CollectionWrapper>
+                    <Collection>
+                      {아이템.map((v, i) => {
+                        return (
+                          <>
+                            <img src={아이템[i].src} style={{ width: "70%" }} />
+                            <div
+                              style={{
+                                padding: "20px 20px 60px 20px",
+                                fontSize: "20px",
+                              }}
+                            >
+                              {아이템[i].title}
+                            </div>
+                          </>
+                        );
+                      })}
+                    </Collection>
+                  </CollectionWrapper>
+                </Right>
               </MiddleWrapper>
             }
           ></Route>
@@ -201,6 +252,20 @@ const Main = styled.div`
   /* max-width: 1280px; */
 `;
 
+const Right = styled.div`
+  height: 100%;
+  width: 350px;
+  padding-top: 90px;
+`;
+
+const CollectionWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+`;
+
+const Collection = styled.div``;
+
 const Header = styled.div`
   padding: 30px;
   position: fixed;
@@ -222,7 +287,7 @@ const Input = styled.input`
   width: 250px;
   outline-color: #ccc;
   border-radius: 5px;
-  padding: 0 0 0 30px;
+  padding: 0 0 0 15px;
   font-size: 15px;
   border: 1px solid #ccc;
   &:hover {
@@ -241,7 +306,7 @@ const Ul = styled.ul`
   margin: 0;
   padding: 0;
   gap: 30px;
-  width: 70%;
+  width: 65%;
   font-weight: bold;
 `;
 
@@ -255,7 +320,7 @@ const Middle = styled.div`
   width: 1280px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 const ContentWrapper = styled.div`
@@ -274,7 +339,7 @@ const ItemWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   display: flex;
-  padding: 30px;
+  padding: 10px;
 `;
 
 const MoreBtn = styled.button`
@@ -296,4 +361,6 @@ const Footer = styled.div`
   display: flex;
   justify-content: center;
   border-top: 1px solid #ccc;
+  z-index: 5;
+  position: relative;
 `;

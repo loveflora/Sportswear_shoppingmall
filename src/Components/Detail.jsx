@@ -2,19 +2,72 @@ import React from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 //* ICONS
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaSave } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { GiRolledCloth } from "react-icons/gi";
 
 export default function Detail() {
   let { id } = useParams();
-  let dispatch = useDispatch();
   let state = useSelector((state) => state);
 
-  //? 위 화면으로 포커스 되기 -- 뭔말이지...?
-  //? 아이템 선택하면 정보 띄우기
+  //? ------------
+  //? 최근 본 상품
+  //? ------------
+  //? 1) Detail 페이지 접속하면 특정 코드 실행 ===> useEffect() 사용 ----- ??? 아니... 왜 굳이 써야하지 ? ㅋㅋㅋㅋㅋ
+  //? 2) 해당 id 가져와서
+  //? 3) local Storage에 collection 항목에 있는 [ ]에 id 추가
+
+  //? 1) Detail 페이지 접속
+  //? 2) 현재 페이지 id 가져오기
+  useEffect(() => {
+    //   console.log(id);
+    // });
+
+    //? 3) local Storage에 collection 항목에 있는 [ ]에 id 추가
+    //? local Storage 항목은 수정이 안됨.
+    //? ~~> [] 빼서 --- id 추가하고 --- 다시 collection에 저장
+    // 3-1) [ ] 빼기
+    let 꺼낸거 = localStorage.getItem("collection");
+    // 3-2) string -> 배열로 전환
+    꺼낸거 = JSON.parse(꺼낸거);
+    // 3-3) id 추가하기
+
+    let data = {
+      id: id,
+      src: state.item[id].src,
+      title: state.item[id].title,
+    };
+
+    꺼낸거.push(data);
+
+    //? 4) 중복된 항목 제거 ! : Set으로 바꿨다가, 다시 array로 만들기
+    // Set : 중복 제거해주는 array
+    // new Set(array자료) = array --> Set으로 바꿀 수 있고
+    // 꺼낸거 = new Set(꺼낸거);
+    // Array.from(Set자료) = Set --> array로 바꿀 수 있음
+    // 꺼낸거 = Array.from(꺼낸거);
+    // 꺼낸거 = [...꺼낸거];
+
+    //? 중복된 객체를 제거
+    // 두개를 꺼내서 -- 같은 index 비교 !
+    //? 밑에 코드는 실행이 안됨...ㅠㅠ
+    // const 중복제거 = 꺼낸거.filter((a, i) => {
+    //   return (
+    //     a.findIndex((b, j) => {
+    //       return a.title === b.title;
+    //     }) === i
+    //   );
+    // });
+
+    const 중복제거 = 꺼낸거.filter((v, i, arr) => {
+      return arr.findIndex((item) => item.title === v.title) === i;
+    });
+
+    // 3-4) '꺼낸거' 다시 collection에 저장
+    localStorage.setItem("collection", JSON.stringify(중복제거));
+  }, []);
 
   //* ----------
   //* STATE
@@ -45,15 +98,15 @@ export default function Detail() {
   const onChange1 = (e) => {
     const value = e.target.value;
 
-    setItem((prev) => {
-      const copy = [...prev];
-      return copy.map((item) => {
-        return {
-          ...item,
-          color: value,
-        };
-      });
-    });
+    // setItem((prev) => {
+    //   const copy = [...prev];
+    //   return copy.map((item) => {
+    //     return {
+    //       ...item,
+    //       color: value,
+    //     };
+    //   });
+    // });
 
     // const toggleHandler = () => {
     //   setList((prevState) => {
@@ -89,9 +142,9 @@ export default function Detail() {
   const onChange2 = (e) => {
     const value = e.target.value;
 
-    let copy = [...item];
-    copy[0].size = value;
-    setItem(copy);
+    // let copy = [...item];
+    // copy[0].size = value;
+    // setItem(copy);
 
     console.log(item);
   };
@@ -99,16 +152,16 @@ export default function Detail() {
   const onChange3 = (e) => {
     const value = e.target.value;
 
-    let copy = [...item];
-    copy[0].option = value;
-    setItem(copy);
+    // let copy = [...item];
+    // copy[0].option = value;
+    // setItem(copy);
 
     console.log(item);
   };
 
   //? select 값 itme에 추가하기 ....!!!!
   const addItme = () => {
-    // let copy = [...item];
+    let copy = [...item];
     // copy.push({
     //   id: 1,
     //   color: "",
@@ -117,7 +170,7 @@ export default function Detail() {
     //   option: "",
     // });
     // setItem(copy);
-    // console.log(item);
+    console.log(copy);
   };
 
   //? alert 기능 추가 : "최소 1개 구매하셔야 합니다."

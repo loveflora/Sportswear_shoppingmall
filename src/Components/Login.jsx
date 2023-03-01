@@ -27,9 +27,11 @@ export default function Login() {
 }
 
 const MainWrapper = styled.div`
+  padding-top: 90px;
   width: 400px;
   margin-left: auto;
   margin-right: auto;
+  height: 80vh;
 `;
 
 const InputWrapper = styled.div`
