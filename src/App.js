@@ -1,7 +1,7 @@
 import "./App.css";
 import "./nomalize.css";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -19,22 +19,60 @@ import Login from "./Components/Login";
 import Detail from "./Components/Detail";
 
 //? ----- 구현하고 싶은 기능 -----
-//? 1) 최근 본 상품
-//? 2) 더보기 기능
-//? 3) 클릭하면 상품별 Detail 페이지 이동
-
-//? data.js 는 추후 삭제예정
+// 완료 --- 1) 클릭하면 상품별 Detail 페이지 이동
+// 완료 --- 2) 최근 본 상품
+// 완료 --- 3) 더보기 기능
 
 function App() {
   let navigate = useNavigate();
   let state = useSelector((state) => state);
 
+  // * -------------
+  // * State
+  // * -------------
+  let [tab, setTab] = useState(0);
+
+  //? ---------
+  //? 상품 더보기
+  //? ---------
+  // cnt : 버튼 클릭횟수
+  // let cnt = 1; 이라고 해버리면, 다시 위에서부터 읽기 때문에 계속 let cnt = 1; 이 됨.
+  let [cnt, setCnt] = useState(1);
+  let [layout, setLayout] = useState([]);
+  let arr = state.data.filter((v, i) => i < 4 * cnt);
+  useEffect(() => {
+    setLayout(arr);
+  }, []);
+
+  let [watch, setWatch] = useState([]);
+
   //? ---------
   //? 최근 본 상품 : local Storage에 저장
   //? ---------
+  // 추가 기능 : 새로고침 시, 초기값으로 돌아감
+  // ==> 이미 watched 항목 있으면, setItem() 하지 말아주세요 ~ !
   useEffect(() => {
-    localStorage.setItem("collection", JSON.stringify([]));
+    let watched = JSON.parse(localStorage.getItem("collection"));
+
+    // 1. 맨처음 한 번만 실행
+    // console.log(watch); // null
+    // console.log(watched); // []
+
+    // 3. 새로고침 시 실행
+    // if (watched !== null) {
+    //   setWatch(watched);
+    //   console.log(watch);
+    // } else if (watched === null) {
+    //   localStorage.setItem("collection", JSON.stringify([]));
+    // }
+    //? 아무것도 없으면 빈 배열
+    if (watched === null) {
+      localStorage.setItem("collection", JSON.stringify([]));
+    } else setWatch(watched);
   }, []);
+
+  // 2. 계속 실행
+  // console.log(watch); // []
 
   // let 제목 = 꺼낸거[0].title;
 
@@ -48,12 +86,6 @@ function App() {
   // console.log();
   // console.log(이미지);
 
-  // * -------------
-  // * State
-  // * -------------
-  // let [item, setItem] = useState();
-  let [tab, setTab] = useState(0);
-
   // useEffect(() => {
   // console.log(아이템);
   // setList(아이템[0].title);
@@ -63,9 +95,21 @@ function App() {
   // console.log(copy);
   // }, []);
 
-  let 아이템 = JSON.parse(localStorage.getItem("collection"));
   // 아이템 = new Set(아이템);
   // 아이템 = Array.from(아이템);
+
+  // * -------------
+  // * Handler
+  // * -------------
+  const moreHandler = () => {
+    setCnt(++cnt);
+    let copy = [...state.data.filter((v, i) => i < 4 * cnt)];
+    setLayout(copy);
+
+    // useEffect(() => {
+    //   setLayout(arr);
+    // }, []);
+  };
 
   // * -------------
   // * Render
@@ -178,29 +222,45 @@ function App() {
                       }}
                     >
                       <h1>BEST ITEM 🏆</h1>
-                      <div style={{ width: "1024px" }}>
+                      <div
+                      // style={{
+                      //   width: "1280px",
+                      //   flexWrap: "wrap",
+                      //   display: "flex",
+                      // }}
+                      >
                         <Content>
-                          {state.item.map((v, i) => (
+                          {layout.map((v, i) => (
                             <ItemWrapper>
                               <img
-                                src={state.item[i].src}
-                                style={{ width: "300px", padding: "30px" }}
+                                src={layout[i].src}
+                                style={{
+                                  width: "300px",
+                                  height: "420px",
+                                  padding: "30px",
+                                }}
                                 onClick={() => {
-                                  navigate(`/detail/${state.item[i].id}`);
+                                  navigate(`/detail/${state.data[i].id}`);
                                 }}
                               />
                               <p style={{ fontWeight: "bold" }}>
-                                {state.item[i].title}
+                                {layout[i].title}
                               </p>
-                              <p>{state.item[i].price} Won</p>
+                              <p>{layout[i].price} Won</p>
                               <p style={{ color: "gray" }}>
-                                {state.item[i].content}
+                                {layout[i].content}
                               </p>
                             </ItemWrapper>
                           ))}
                         </Content>
                       </div>
-                      <MoreBtn onClick={() => {}}>MORE</MoreBtn>
+                      <MoreBtn
+                        onClick={() => {
+                          moreHandler();
+                        }}
+                      >
+                        MORE
+                      </MoreBtn>
                     </div>
                   </ContentWrapper>
                 </Middle>
@@ -208,21 +268,25 @@ function App() {
                   <h2 style={{ padding: "30px" }}>Collection</h2>
                   <CollectionWrapper>
                     <Collection>
-                      {아이템.map((v, i) => {
-                        return (
-                          <>
-                            <img src={아이템[i].src} style={{ width: "70%" }} />
-                            <div
-                              style={{
-                                padding: "20px 20px 60px 20px",
-                                fontSize: "20px",
-                              }}
-                            >
-                              {아이템[i].title}
-                            </div>
-                          </>
-                        );
-                      })}
+                      {watch &&
+                        watch.map((v, i) => {
+                          return (
+                            <>
+                              <img
+                                src={watch[i].src}
+                                style={{ width: "70%" }}
+                              />
+                              <div
+                                style={{
+                                  padding: "20px 20px 60px 20px",
+                                  fontSize: "20px",
+                                }}
+                              >
+                                {watch[i].title}
+                              </div>
+                            </>
+                          );
+                        })}
                     </Collection>
                   </CollectionWrapper>
                 </Right>
@@ -233,7 +297,10 @@ function App() {
           <Route path="/woman" element={<Woman />}></Route>
           <Route path="/sale" element={<Sale />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
-          <Route path="/detail/:id" element={<Detail />}></Route>
+          <Route
+            path="/detail/:id"
+            element={<Detail setWatch={setWatch} />}
+          ></Route>
           <Route path="/login" element={<Login />}></Route>
         </Routes>
         {/* </RouterWrapper> */}
@@ -332,6 +399,7 @@ const Content = styled.div`
   flex-direction: row;
   justify-content: center;
   max-width: 1280px;
+  flex-wrap: wrap;
 `;
 
 const ItemWrapper = styled.div`
