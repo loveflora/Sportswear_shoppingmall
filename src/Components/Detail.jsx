@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { changeLike } from "../Store/Store";
+import { changeLike, changeCount } from "../Store/Store";
 //* ICONS
 import { FaHeart, FaSave } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
@@ -15,6 +15,7 @@ export default function Detail({ watch, setWatch }) {
   let dispatch = useDispatch();
 
   //? ----- 구현하고 싶은 기능 -----
+  //? 0) 상세페이지 이미지 상단 고정
   // 1) 와 드디어 완료 ㅠㅠㅠ (3/11) ---  select 기능
   //? 2) 값 계산
   // 2-1) optPrice = option(1, 2, 3)에 따라 --> price + 1 2 3
@@ -94,7 +95,7 @@ export default function Detail({ watch, setWatch }) {
   //* STATE
   //* ----------
   const [totalPrice, setTotalPrice] = useState(0);
-  const [count, setCount] = useState(1);
+  const [cnt, setCnt] = useState(1);
 
   // select 항목 담은 []
   const [selectList, setSelectList] = useState([]);
@@ -106,7 +107,10 @@ export default function Detail({ watch, setWatch }) {
     option: "",
     show: false,
     price: state.data[id].price,
+    count: 1,
   });
+
+  let priceArr = [];
 
   //* -----------
   //* HANDLERS
@@ -181,12 +185,28 @@ export default function Detail({ watch, setWatch }) {
   //   // setItem(copy);
   // };
 
+  //? 총가격 계산
+  // useEffect(() => {
+  //   const totalCal = () => {
+  //     priceArr = selectList.map((v, i) => v.count * v.price);
+  //     setTotalPrice(priceArr.reduce((a, c) => a + c, 0));
+  //   };
+  // });
+
+  useEffect(() => {
+    priceArr = selectList.map((v, i) => v.count * v.price);
+    setTotalPrice(priceArr.reduce((a, c) => a + c, 0));
+  }, [selectList]);
+
   //? select 값 itme에 추가하기 !!!
   const addItem = () => {
     optPrice();
     setSelect((select.show = true));
+    // setTotalPrice(select.price);
 
     setSelectList([...selectList, { ...select }]);
+    // totalCal();
+
     // setSelect({ id: selectList.length + 1 });
     // setSelect((prevState) => ({ ...prevState, id: selectList.length + 1 }));
     setSelect({
@@ -221,31 +241,70 @@ export default function Detail({ watch, setWatch }) {
   const optPrice = () => {
     if (select.option === "밴드") {
       select.price += 8000;
-      setTotalPrice(totalPrice + select.price);
+      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "링") {
       select.price += 6000;
-      setTotalPrice(totalPrice + select.price);
+      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "악력볼") {
       select.price += 5000;
-      setTotalPrice(totalPrice + select.price);
+      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "선택안함") {
-      setTotalPrice(totalPrice + select.price);
+      // setTotalPrice(totalPrice + select.price);
     }
   };
 
   //? 2-2) optPrice * cnt = count + -
-  // const addHandler = () => {
-  //   if (count > 1) {
-  //     setCount(count - 1);
-  //   } else return;
-  // };
+  const addHandler = (i) => {
+    let idx = selectList.findIndex((v) => {
+      return v.id === i;
+    });
 
-  // const reduceHandler = () => {
-  //   setCount(count + 1);
-  // };
+    // 2-2-1) id 개별로 갯수 증가
+    // setSelectList([...selectList, (selectList[idx].count += 1)]); ------> 아님 !!!!!
+    //! 이렇게 한꺼번에 하면 --> count가 별도의 요소로 추가됨
+    //! EX) [{id: 0, ...}, 2] 이런식으로 !!!
+    // literally, 뒤에 붙여주세요, 이런 뜻이니까 ㅋㅋㅋㅋ
+
+    // 그래서 !!! 이렇게 별도로 변경해줘야 한다 ~~~~ !
+    selectList[idx].count += 1;
+    setSelectList([...selectList]);
+    // 와씨... 성공 나이스 !!!!!!!
+
+    // // 2-2-2) 갯수 * price
+
+    // 2-2-3) 총합 계산
+
+    // let answer = 0;
+    // for (let i = 0; i < selectList.length; i++) {
+    //   let total = selectList[i].price * selectList[i].count;
+    //   answer = answer + total;
+    // }
+    // console.log(answer);
+
+    // totalCal();
+
+    // for (let i = 0; i < selectList.length; i++) {
+    //   let total = selectList[i].price * selectList[i].count;
+    //   setTotalPrice(total);
+    // setTotalPrice((prevState) => prevState + total);
+    // }
+  };
+  // console.log(totalPrice);
+
+  const reduceHandler = (i) => {
+    let idx = selectList.findIndex((v) => {
+      return v.id === i;
+    });
+
+    // 2-2-1) id 개별로 갯수 증가
+    if (selectList[idx].count > 1) {
+      selectList[idx].count -= 1;
+      setSelectList([...selectList]);
+    }
+  };
 
   //? 나에게 맞는 사이즈는 ? : 모달창 띄우기 !
   const Modal = () => {
@@ -340,7 +399,9 @@ export default function Detail({ watch, setWatch }) {
             fontSize: "18px",
             border: "none",
           }}
-          onClick={addItem}
+          onClick={() => {
+            addItem();
+          }}
         >
           추가하기
         </button>
@@ -375,27 +436,35 @@ export default function Detail({ watch, setWatch }) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
+                      justifyContent: "center",
                       gap: "10px",
+                      width: "150px",
                     }}
                   >
                     {/* ---- count === 0 일시, alert("최소 구매수량은 1개 입니다.") ---- */}
                     <CountBtn
                       onClick={() => {
-                        dispatch(addCount(selectList[i].id));
+                        reduceHandler(selectList[i].id);
                       }}
                     >
                       -
                     </CountBtn>
-                    <div>{count}</div>
+                    <div>{selectList[i].count}</div>
                     <CountBtn
                       onClick={() => {
-                        dispatch(reduceCount(selectList[i].id));
+                        addHandler(selectList[i].id);
                       }}
                     >
                       +
                     </CountBtn>
                   </div>
-                  <div>{selectList[i].price}원</div>
+                  <div
+                    style={{
+                      width: "150px",
+                    }}
+                  >
+                    {selectList[i].price * selectList[i].count}원
+                  </div>
                   <IoClose size="30" className="closeBtn" />
                 </SelectPrice>
               )}
@@ -447,7 +516,6 @@ export default function Detail({ watch, setWatch }) {
                 className="heart"
                 onClick={() => {
                   dispatch(changeLike(state.data[id].id));
-                  console.log(state.data[id].like);
                 }}
               />
             ) : (
@@ -534,7 +602,7 @@ const Total = styled.div`
   font-size: 23px;
   font-weight: bold;
   border-top: 3px solid black;
-  padding: 30px 0;
+  padding: 30px 30px;
 `;
 
 const BtnWrapper = styled.div`

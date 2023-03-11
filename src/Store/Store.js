@@ -113,6 +113,13 @@ let data = createSlice({
     },
   ],
   reducers: {
+    // changeCount(state, action) {
+    //   // action: parameter
+    //   let num = state.findIndex((v) => {
+    //     return v.id === action.payload;
+    //   });
+    //   // state[num].count;
+    // },
     // addCount(state, action) {
     //   // action: parameter
     //   let num = state.findIndex((v) => {
@@ -146,6 +153,6 @@ export default configureStore({
   },
 });
 
-export let { addCount, reduceCount, changeLike } = data.actions;
+export let { changeCount, changeLike } = data.actions;
 
 //? 2. 주문하기 버튼 누르면, 장바구니에 상품 추가
