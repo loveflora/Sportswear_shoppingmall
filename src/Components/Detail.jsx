@@ -15,14 +15,14 @@ export default function Detail({ watch, setWatch }) {
   let dispatch = useDispatch();
 
   //? ----- 구현하고 싶은 기능 -----
-  //? 0) 상세페이지 이미지 상단 고정
-  // 1) 와 드디어 완료 ㅠㅠㅠ (3/11) ---  select 기능
-  //? 2) 값 계산
+  // 0) [완료] 상세페이지 이미지 상단 고정
+  // 1) [완료] 와 드디어 ㅠㅠㅠ (3/11) ---  select 기능
+  // 2) [완료] --- 값 계산
   // 2-1) optPrice = option(1, 2, 3)에 따라 --> price + 1 2 3
   // 2-2) optPrice * cnt = count + -
   // 2-3) totalPrice = SUM(2-2)
   //? 3) 모달 기능
-  // 4) 완료 --- like 관심 상품 기능
+  // 4) [완료] --- like 관심 상품 기능
   //? 5) 크기/색상/옵션 선택 안할 경우, alert 창 뜨기 !
   //? 6) 장바구니 담기
   //? 7) 리뷰 기능
@@ -194,7 +194,7 @@ export default function Detail({ watch, setWatch }) {
   // });
 
   useEffect(() => {
-    priceArr = selectList.map((v, i) => v.count * v.price);
+    priceArr = selectList.map((v) => v.count * v.price);
     setTotalPrice(priceArr.reduce((a, c) => a + c, 0));
   }, [selectList]);
 
@@ -205,7 +205,6 @@ export default function Detail({ watch, setWatch }) {
     // setTotalPrice(select.price);
 
     setSelectList([...selectList, { ...select }]);
-    // totalCal();
 
     // setSelect({ id: selectList.length + 1 });
     // setSelect((prevState) => ({ ...prevState, id: selectList.length + 1 }));
@@ -241,18 +240,14 @@ export default function Detail({ watch, setWatch }) {
   const optPrice = () => {
     if (select.option === "밴드") {
       select.price += 8000;
-      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "링") {
       select.price += 6000;
-      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "악력볼") {
       select.price += 5000;
-      // setTotalPrice(totalPrice + select.price);
     }
     if (select.option === "선택안함") {
-      // setTotalPrice(totalPrice + select.price);
     }
   };
 
@@ -273,8 +268,6 @@ export default function Detail({ watch, setWatch }) {
     setSelectList([...selectList]);
     // 와씨... 성공 나이스 !!!!!!!
 
-    // // 2-2-2) 갯수 * price
-
     // 2-2-3) 총합 계산
 
     // let answer = 0;
@@ -283,8 +276,6 @@ export default function Detail({ watch, setWatch }) {
     //   answer = answer + total;
     // }
     // console.log(answer);
-
-    // totalCal();
 
     // for (let i = 0; i < selectList.length; i++) {
     //   let total = selectList[i].price * selectList[i].count;
@@ -326,7 +317,7 @@ export default function Detail({ watch, setWatch }) {
         width="450px"
         height="700px"
         style={{
-          margin: "30px",
+          margin: "200px 0px",
           display: "flex",
         }}
       />
@@ -343,7 +334,7 @@ export default function Detail({ watch, setWatch }) {
           <div>색상</div>
           <select
             onChange={onChange}
-            style={{ width: "500px", padding: "5px" }}
+            style={{ width: "500px", padding: "5px", cursor: "pointer" }}
             name="color"
             value={select.color}
           >
@@ -359,7 +350,7 @@ export default function Detail({ watch, setWatch }) {
           <div>사이즈</div>
           <select
             onChange={onChange}
-            style={{ width: "500px", padding: "5px" }}
+            style={{ width: "500px", padding: "5px", cursor: "pointer" }}
             name="size"
             value={select.size}
           >
@@ -375,7 +366,7 @@ export default function Detail({ watch, setWatch }) {
           <div>추가상품</div>
           <select
             onChange={onChange}
-            style={{ width: "500px", padding: "5px" }}
+            style={{ width: "500px", padding: "5px", cursor: "pointer" }}
             name="option"
             value={select.option}
           >
@@ -465,7 +456,11 @@ export default function Detail({ watch, setWatch }) {
                   >
                     {selectList[i].price * selectList[i].count}원
                   </div>
-                  <IoClose size="30" className="closeBtn" />
+                  <IoClose
+                    size="30"
+                    className="closeBtn"
+                    style={{ cursor: "pointer" }}
+                  />
                 </SelectPrice>
               )}
             </>
@@ -540,9 +535,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
   margin: 0 auto;
   padding: 80px 0;
+  align-items: flex-start;
 `;
 
 const Content = styled.div`
@@ -590,6 +585,7 @@ const CountBtn = styled.div`
   border: 1px solid gray;
   width: 30px;
   height: 30px;
+  cursor: pointer;
 `;
 
 const Price = styled.div``;
@@ -615,8 +611,9 @@ const BtnWrapper = styled.div`
     width: 40px;
     height: 40px;
     justify-content: center;
-    color: ${(props) => props.color};
+    color: ${({ color }) => color};
     margin: 10px;
+    cursor: pointer;
   }
 `;
 

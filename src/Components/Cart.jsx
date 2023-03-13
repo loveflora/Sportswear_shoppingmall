@@ -35,9 +35,9 @@ export default function Cart() {
         </thead>
         <tbody>
           <tr>
-            <td>{state.item[0].id + 1}</td>
-            <td>{state.item[0].title}</td>
-            <td>{state.item[0].price}</td>
+            <td>{state.data[0].id + 1}</td>
+            <td>{state.data[0].title}</td>
+            <td>{state.data[0].price}</td>
             <td>
               <Btn onClick={() => (num > 1 ? setNum(num - 1) : null)}>-</Btn>
               {num}
@@ -51,7 +51,14 @@ export default function Cart() {
             </td>
             <td>
               <button
-                style={{ background: "black", color: "white", border: "none" }}
+                style={{
+                  background: "black",
+                  color: "white",
+                  border: "none",
+                  width: "80px",
+                  borderRadius: "3px",
+                  padding: "5px",
+                }}
               >
                 삭제하기
               </button>
